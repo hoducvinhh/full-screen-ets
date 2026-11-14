@@ -8,6 +8,10 @@ const contentScript = fs.readFileSync(
   path.join(__dirname, "..", "content.js"),
   "utf8"
 );
+const videoFullscreenScript = fs.readFileSync(
+  path.join(__dirname, "..", "utils", "video-fullscreen.js"),
+  "utf8"
+);
 
 function createVideo({ connected = true, requestFullscreen } = {}) {
   const properties = new Map();
@@ -69,7 +73,7 @@ async function runContentScript({ video, fullscreenElement = null, fullscreenEna
     console
   };
 
-  await vm.runInNewContext(contentScript, context);
+  await vm.runInNewContext(`${videoFullscreenScript}\n${contentScript}`, context);
   return { document, listeners, messages };
 }
 

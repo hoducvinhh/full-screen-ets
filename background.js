@@ -97,7 +97,7 @@ async function clearResult(tabId) {
     await chrome.action.setBadgeText({ tabId, text: "" });
     await chrome.action.setTitle({
       tabId,
-      title: "Fullscreen the video on this page"
+      title: "Choose a viewing mode"
     });
   } catch (error) {
     console.error("Could not clear the previous fullscreen result.", error);

@@ -246,8 +246,10 @@
       header.className = "image-header";
       const label = document.createElement("span");
       label.textContent = `${state.index + 1} / ${candidates.length}`;
+      const status = document.createElement("span");
+      status.className = "status";
       const closeButton = makeButton("Đóng", "close", () => void close());
-      header.append(label, closeButton);
+      header.append(label, status, closeButton);
 
       const stage = document.createElement("main");
       stage.className = "image-stage";
@@ -255,6 +257,9 @@
       image.src = candidates[state.index].src;
       image.alt = candidates[state.index].alt;
       image.draggable = false;
+      image.addEventListener("error", () => {
+        showStatus("Could not load this original image in the viewer.");
+      });
       stage.appendChild(image);
 
       const controls = document.createElement("footer");
@@ -275,7 +280,9 @@
       header.className = "reader-header";
       const label = document.createElement("span");
       label.textContent = `Đọc truyện · ${candidates.length} ảnh`;
-      header.append(label, makeButton("Đóng", "close", () => void close()));
+      const status = document.createElement("span");
+      status.className = "status";
+      header.append(label, status, makeButton("Đóng", "close", () => void close()));
 
       const pages = document.createElement("main");
       pages.className = "reader-pages";
@@ -285,6 +292,9 @@
         image.alt = candidate.alt;
         image.loading = "lazy";
         image.decoding = "async";
+        image.addEventListener("error", () => {
+          showStatus("Could not load one of the original images in the reader.");
+        });
         pages.appendChild(image);
       }
       frame.append(header, pages);

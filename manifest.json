@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "Video Fullscreen",
-  "version": "1.0.0",
-  "description": "Put a visible HTML5 video into fullscreen when its player has no fullscreen control.",
+  "name": "Video & Comic Fullscreen",
+  "version": "1.1.0",
+  "description": "Fullscreen HTML5 videos or read image-based comics on the current website.",
   "permissions": [
     "activeTab",
     "scripting"
@@ -14,7 +14,7 @@
     "service_worker": "background.js"
   },
   "action": {
-    "default_title": "Fullscreen the video on this page"
+    "default_title": "Choose a viewing mode"
   },
   "commands": {
     "fullscreen_video": {
