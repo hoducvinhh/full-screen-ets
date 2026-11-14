@@ -2,7 +2,17 @@ const RESULT_MESSAGE = "video-fullscreen-result";
 
 chrome.action.onClicked.addListener((tab) => {
   if (typeof tab.id === "number") {
-    fullscreenVideoInTab(tab.id);
+    openModeChooser(tab.id);
+  }
+});
+
+chrome.commands.onCommand.addListener((command) => {
+  if (command === "fullscreen_video") {
+    chrome.tabs.query({ active: true, lastFocusedWindow: true }, ([tab]) => {
+      if (tab && typeof tab.id === "number") {
+        fullscreenVideoInTab(tab.id);
+      }
+    });
   }
 });
 
@@ -21,12 +31,58 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   void showResult(sender.tab.id, message);
 });
 
+async function openModeChooser(tabId) {
+  void clearResult(tabId);
+
+  try {
+    await chrome.scripting.executeScript({
+      target: { tabId, allFrames: true },
+      files: [
+        "utils/video-selector.js",
+        "utils/video-fullscreen.js",
+        "utils/image-selector.js",
+        "comic-viewer.js"
+      ]
+    });
+
+    const frameResults = await chrome.scripting.executeScript({
+      target: { tabId, allFrames: true },
+      func: () => globalThis.__comicImageSelector.findImages()
+    });
+    const orderedResults = frameResults.sort((left, right) => left.frameId - right.frameId);
+    const readerImages = [];
+    const pageImages = [];
+
+    for (const frameResult of orderedResults) {
+      const result = frameResult.result;
+      if (!result) {
+        continue;
+      }
+      readerImages.push(...result.readerImages);
+      pageImages.push(...result.pageImages);
+    }
+
+    const images = readerImages.length ? readerImages : pageImages;
+    await chrome.scripting.executeScript({
+      target: { tabId, frameIds: [0] },
+      func: (comicImages) => globalThis.__comicViewer.open(comicImages),
+      args: [images]
+    });
+  } catch (error) {
+    console.error("Could not open the comic mode chooser.", error);
+    await showResult(tabId, {
+      status: "error",
+      message: "This page does not allow the extension to access its images."
+    });
+  }
+}
+
 function fullscreenVideoInTab(tabId) {
   void clearResult(tabId);
 
   chrome.scripting.executeScript({
     target: { tabId, allFrames: true },
-    files: ["utils/video-selector.js", "content.js"]
+    files: ["utils/video-selector.js", "utils/video-fullscreen.js", "content.js"]
   }).catch(async (error) => {
     console.error("Could not run the fullscreen action in this tab.", error);
     await showResult(tabId, {

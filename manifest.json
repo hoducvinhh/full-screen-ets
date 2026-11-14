@@ -17,10 +17,11 @@
     "default_title": "Fullscreen the video on this page"
   },
   "commands": {
-    "_execute_action": {
+    "fullscreen_video": {
       "suggested_key": {
         "default": "Alt+Shift+F"
-      }
+      },
+      "description": "Fullscreen the video on this page"
     }
   }
 }
