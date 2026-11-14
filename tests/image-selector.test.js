@@ -112,3 +112,11 @@ test("returns no candidates for a page without eligible images", () => {
   assert.equal(result.readerImages.length, 0);
   assert.equal(result.pageImages.length, 0);
 });
+
+test("keeps wide comic panels with enough original image area", () => {
+  const panel = createImage({ width: 1200, height: 240 });
+
+  const result = findImages([panel]);
+
+  assert.equal(result.pageImages.length, 1);
+});

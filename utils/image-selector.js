@@ -15,8 +15,7 @@
   function isVisibleImage(image) {
     if (
       !image.isConnected ||
-      image.naturalWidth < MIN_IMAGE_DIMENSION ||
-      image.naturalHeight < MIN_IMAGE_DIMENSION ||
+      Math.max(image.naturalWidth, image.naturalHeight) < MIN_IMAGE_DIMENSION ||
       image.naturalWidth * image.naturalHeight < MIN_IMAGE_AREA ||
       !(image.currentSrc || image.src)
     ) {

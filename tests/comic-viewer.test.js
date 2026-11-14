@@ -62,12 +62,15 @@ class FakeElement {
 function createViewer(images) {
   const documentListeners = new Map();
   const elements = [];
+  let fullscreenRequests = 0;
   const document = {
     fullscreenElement: null,
+    fullscreenEnabled: true,
     documentElement: new FakeElement("html"),
     createElement(tagName) {
       const element = new FakeElement(tagName);
       element.requestFullscreen = () => {
+        fullscreenRequests += 1;
         document.fullscreenElement = element;
         const listener = documentListeners.get("fullscreenchange");
         if (listener) {
@@ -116,7 +119,17 @@ function createViewer(images) {
   const frame = host.shadowRoot.children[1];
   const actions = frame.children[2];
 
-  return { document, documentListeners, elements, host, frame, actions };
+  return {
+    document,
+    documentListeners,
+    elements,
+    host,
+    frame,
+    actions,
+    get fullscreenRequests() {
+      return fullscreenRequests;
+    }
+  };
 }
 
 const pages = [
@@ -165,4 +178,15 @@ test("escape exits fullscreen and removes the viewer", async () => {
 
   assert.equal(document.fullscreenElement, null);
   assert.equal(host.removed, true);
+});
+
+test("does not replace another element that is already fullscreen", () => {
+  const { document, actions, fullscreenRequests } = createViewer(pages);
+  const otherElement = {};
+  document.fullscreenElement = otherElement;
+
+  actions.children[1].dispatch("click");
+
+  assert.equal(document.fullscreenElement, otherElement);
+  assert.equal(fullscreenRequests, 0);
 });

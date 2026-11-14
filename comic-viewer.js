@@ -186,6 +186,14 @@
     }
 
     function requestFullscreen() {
+      if (document.fullscreenElement && document.fullscreenElement !== host) {
+        showStatus("Another element is already in fullscreen.");
+        return;
+      }
+      if (document.fullscreenEnabled === false) {
+        showStatus("Fullscreen is unavailable on this page.");
+        return;
+      }
       if (typeof host.requestFullscreen !== "function") {
         showStatus("Fullscreen is unavailable on this page.");
         return;
