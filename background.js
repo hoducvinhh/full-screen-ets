@@ -6,7 +6,7 @@ chrome.action.onClicked.addListener((tab) => {
   }
 });
 
-chrome.runtime.onMessage.addListener((message, sender) => {
+chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (
     !message ||
     message.type !== RESULT_MESSAGE ||
@@ -17,6 +17,7 @@ chrome.runtime.onMessage.addListener((message, sender) => {
     return;
   }
 
+  sendResponse({ received: true });
   void showResult(sender.tab.id, message);
 });
 
@@ -24,7 +25,7 @@ function fullscreenVideoInTab(tabId) {
   void clearResult(tabId);
 
   chrome.scripting.executeScript({
-    target: { tabId },
+    target: { tabId, allFrames: true },
     files: ["utils/video-selector.js", "content.js"]
   }).catch(async (error) => {
     console.error("Could not run the fullscreen action in this tab.", error);

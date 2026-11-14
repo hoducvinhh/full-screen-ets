@@ -45,5 +45,40 @@ test("injects immediately on toolbar click without waiting for badge updates", (
 
   assert.equal(injections.length, 1);
   assert.equal(injections[0].target.tabId, 17);
+  assert.equal(injections[0].target.allFrames, true);
   assert.deepEqual(Array.from(injections[0].files), ["utils/video-selector.js", "content.js"]);
+});
+
+test("acknowledges fullscreen results sent by the content script", () => {
+  let onMessage;
+  let response;
+  const chrome = {
+    action: {
+      onClicked: {
+        addListener() {}
+      },
+      setBadgeBackgroundColor: async () => {},
+      setBadgeText: async () => {},
+      setTitle: async () => {}
+    },
+    runtime: {
+      id: "test-extension",
+      onMessage: {
+        addListener(listener) {
+          onMessage = listener;
+        }
+      }
+    }
+  };
+
+  vm.runInNewContext(backgroundScript, { chrome, console });
+  onMessage(
+    { type: "video-fullscreen-result", status: "success" },
+    { id: "test-extension", tab: { id: 17 } },
+    (value) => {
+      response = value;
+    }
+  );
+
+  assert.equal(response.received, true);
 });

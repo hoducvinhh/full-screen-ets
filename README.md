@@ -1,6 +1,6 @@
 # Video Fullscreen
 
-Tiện ích Manifest V3 cho Google Chrome và Microsoft Edge, giúp đưa video HTML5 trên tab hiện tại vào chế độ toàn màn hình khi trình phát không có nút fullscreen.
+Tiện ích Manifest V3 cho Google Chrome và Microsoft Edge, giúp đưa video HTML5 trên website hiện tại (kể cả trong iframe) vào chế độ toàn màn hình khi trình phát không có nút fullscreen.
 
 ## Tính năng
 
@@ -9,9 +9,10 @@ Tiện ích Manifest V3 cho Google Chrome và Microsoft Edge, giúp đưa video 
 - Nếu không có video nào đang phát, chọn video hiển thị lớn nhất.
 - Nhấn lại biểu tượng hoặc phím tắt khi video đang fullscreen để thoát.
 - Nếu một phần tử khác đang fullscreen, extension báo trạng thái thay vì thay thế phần tử đó.
+- Hỗ trợ website trên mọi domain; extension chỉ truy cập trang và các iframe sau khi người dùng bấm biểu tượng hoặc phím tắt.
 - Dùng Fullscreen API của trình duyệt và tạm fit video theo tỉ lệ gốc, không kéo giãn hoặc cắt hình. Style hiển thị được khôi phục khi thoát fullscreen, kể cả khi thoát bằng `Esc`.
 - Không tải, thay thế, chuyển mã hay điều chỉnh nguồn, bitrate hoặc chất lượng video.
-- Chỉ yêu cầu quyền `activeTab` và `scripting`; không yêu cầu quyền truy cập rộng lên mọi website.
+- Yêu cầu quyền `activeTab`, `scripting` và quyền truy cập host trên mọi website để có thể tìm video trong iframe khác domain. Mã chỉ được inject khi người dùng kích hoạt extension.
 
 ## Cài đặt trên Google Chrome
 
@@ -55,7 +56,6 @@ Fullscreen chỉ phóng lớn phần hiển thị của video. Extension không 
 
 ## Giới hạn đã biết
 
-- Chỉ tìm video HTML5 trong tài liệu chính của tab hiện tại; video nằm trong iframe không được dò tìm trong phiên bản MVP.
 - Không hỗ trợ player vẽ hình bằng canvas hoặc player không để lộ phần tử `<video>`.
 - Không vượt qua DRM, sandbox, chính sách bảo mật hoặc giới hạn Fullscreen API của website/trình duyệt.
 - Các trang nội bộ của trình duyệt, trang cửa hàng extension và một số trang được bảo vệ không cho phép extension inject mã.
